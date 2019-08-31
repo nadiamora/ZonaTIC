@@ -58,9 +58,60 @@
         }
         
 
-	}	
-	
+    }	
 ?>
+
+<?php
+/*Requerir conexion con la BD*/
+   $servidor = "localhost";
+   $nombreusuario = "root";
+   $password = "";
+   $db = "zona_tic";
+   
+   $conexion = new mysqli($servidor, $nombreusuario, $password, $db);
+
+   if($conexion->connect_error){
+     die("Conexion fallida: " . $conexion->connect_error);
+   }
+
+  $message = '';
+
+  if (isset($_POST['numControl']) && isset($_POST['idUsuario']) && isset($_POST['correo']) && isset($_POST['nombre']) && isset($_POST['apellidoPat']) && isset($_POST['apellidoMat']) && isset($_POST['contrasena'])){
+	/*Vincular parametros*/
+	$numControl = $_POST ['numControl'];	
+	$idUsuario = $_POST ['idUsuario'];
+	$correo = $_POST ['correo'];
+	$nombre = $_POST ['nombre'];
+	$apellidoPat = $_POST ['apellidoPat'];
+	$apellidoMat = $_POST ['apellidoMat'];
+	$contrasena = $_POST ['contrasena'];	
+    
+    /*Agregar datos a la BD*/
+    $sql = "INSERT INTO usuario (numControl, idUsuario, correo, nombre, apellidoPat, apellidoMat, contrasena) VALUES ('$numControl', '$idUsuario', '$correo', '$nombre', '$apellidoPat', '$apellidoMat', '$contrasena')"; 
+    
+    /*Ejecutar consulta para evitar usuarios repetidos*/
+
+    $verificar_usuario = mysqli_query($conexion, "SELECT * FROM usuario WHERE numControl = '$numControl'");
+    if (mysqli_num_rows($verificar_usuario) > 0) {
+      $verificar_usuario = "El usuario ingresado ya esta registrado";
+
+      include_once 'index.php';
+    }
+
+
+    
+
+
+  if ($conexion->query($sql) === true){
+    $message = 'Tu usuario ha sido creado exitosamente';
+} else{
+    die ("Lo sentimos ha ocurrido un error al intentar registrarlo: " . $conexion->error);
+}
+$conexion->close();
+
+}
+?>
+
 <!DOCTYPE html>
 
 <html lang="es">
